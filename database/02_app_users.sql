@@ -1,0 +1,14 @@
+-- Login accounts for the web app (run AFTER 01_banking_system.sql)
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE app_users CASCADE CONSTRAINTS PURGE'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE seq_user'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+CREATE SEQUENCE seq_user START WITH 1 NOCACHE;
+
+CREATE TABLE app_users (
+  user_id        NUMBER(10)   PRIMARY KEY,
+  username       VARCHAR2(40) NOT NULL UNIQUE,
+  password_hash  VARCHAR2(100) NOT NULL,
+  role           VARCHAR2(15) NOT NULL CHECK (role IN ('CUSTOMER','TELLER','LOAN_OFFICER','ADMIN')),
+  customer_id    NUMBER(10)   REFERENCES customers (customer_id)
+);
